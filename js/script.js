@@ -1,10 +1,9 @@
 let usuarioArray = JSON.parse(localStorage.getItem('Usuarios')) || [];
 
 
-console.log()
 
 function ColocarSenha() {    
-    usuarioArray.forEach(function(Usuario) {
+    usuarioArray.forEach(function(item) {
        
         
 
@@ -21,28 +20,26 @@ function ColocarSenha() {
         const nomeUsuario = document.createElement('span');
         nomeUsuario.classList.add('text-usuario');
         Bloco.appendChild(nomeUsuario);
-        nomeUsuario.innerHTML = `Nome Usuário: ${Usuario.user}`
+        nomeUsuario.innerHTML = `Nome Usuário: ${item.user}`
 
         const senhaUsuario = document.createElement('span');
         senhaUsuario.classList.add('text-senha');
         Bloco.appendChild(senhaUsuario);
-        senhaUsuario.innerHTML = `Senha: ${Usuario.senha}`
+        senhaUsuario.innerHTML = `Senha: ${item.senha}`
 
         const notaUsuario = document.createElement('span');
         notaUsuario.classList.add('text-nota');
         Bloco.appendChild(notaUsuario);
-        notaUsuario.innerHTML =  ` ${Usuario.nota ? `Nota: ${Usuario.nota}` : "Sem nota" }`
+        notaUsuario.innerHTML =  ` ${item.nota ? `Nota: ${item.nota}` : "Sem nota" }`
 
         const botaoExcluir = document.createElement('button');
         botaoExcluir.classList.add('botaoExcluir');
         Bloco.appendChild(botaoExcluir);
         botaoExcluir.innerHTML = 'Excluir'
 
-        console.log(Usuario)
-
         botaoExcluir.addEventListener('click', () => {
-            const indexAtual = usuarioArray.findIndex(usuario => usuario === Usuario);
-            console.log(indexAtual)
+            const indexAtual = usuarioArray.findIndex(usuario => usuario === item);
+
             if (indexAtual !== -1) {
                 usuarioArray.splice(indexAtual, 1);
             localStorage.setItem('Usuarios', JSON.stringify(usuarioArray));

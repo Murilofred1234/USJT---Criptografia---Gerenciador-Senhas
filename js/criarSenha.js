@@ -17,6 +17,12 @@ nameForm.addEventListener("submit", (e) => {
         
     };
 
+    if(novo.user === '' || novo.senha === ''){
+
+    }else{
+        alert('Senha adicioanda com sucesso!')
+    }
+
     usuarioArray.push(novo);
 
     localStorage.setItem("Usuarios", JSON.stringify(usuarioArray));
@@ -25,11 +31,7 @@ nameForm.addEventListener("submit", (e) => {
     senha.value = ''
     nota.value = ''
 
-    console.log('Array atualizado:', usuarioArray);
+    
     
 
 });
-
-function mensagem(){
-    alert('Senha Salva')
-}
