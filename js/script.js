@@ -1,6 +1,11 @@
 let usuarioArray = JSON.parse(localStorage.getItem('Usuarios')) || [];
 
 
+const botaoExcluirTudo = document.querySelector('.excluirTudo');
+
+if(usuarioArray.length === 0){
+    botaoExcluirTudo.style.display = 'none'
+}
 
 function ColocarSenha() {    
     usuarioArray.forEach(function(item) {
@@ -39,12 +44,16 @@ function ColocarSenha() {
 
         botaoExcluir.addEventListener('click', () => {
             const indexAtual = usuarioArray.findIndex(usuario => usuario === item);
-
+            if(usuarioArray.length === 0){
+                botaoExcluirTudo.style.display = 'none'
+            }
             if (indexAtual !== -1) {
-                usuarioArray.splice(indexAtual, 1);
+            usuarioArray.splice(indexAtual, 1);
             localStorage.setItem('Usuarios', JSON.stringify(usuarioArray));
             containerBloco.remove();
-            
+            if(usuarioArray.length === 0){
+                botaoExcluirTudo.style.display = 'none'
+            }
         }
    })     
 
@@ -55,6 +64,9 @@ function ColocarSenha() {
     
     localStorage.setItem('Usuarios', JSON.stringify(usuarioArray));
     containerBloco.remove();
+    if(usuarioArray.length === 0){
+        botaoExcluirTudo.style.display = 'none'
+    }
 })
             
 

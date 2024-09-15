@@ -30,8 +30,4 @@ nameForm.addEventListener("submit", (e) => {
     usuario.value = ''
     senha.value = ''
     nota.value = ''
-
-    
-    
-
 });
