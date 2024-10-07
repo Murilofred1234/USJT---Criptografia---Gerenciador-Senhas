@@ -18,4 +18,9 @@ const conn = mysql.createConnection({
 conn.connect(function(erro){
     if(erro) throw erro;
     console.log("Conexão efetuada com sucesso!")
+    var sql = "INSERT INTO senhas (usuario, senha, nota) VALUES ('murilofcorso', '12345', 'Senha do e-mail')";
+    conn.query(sql, function(erro, result){
+        if(erro) throw erro;
+        console.log("Funcionou!")
+    });
 });
