@@ -10,6 +10,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "aes-js": "^3.1.2"
+    "aes-js": "^3.1.2",
+    "express": "^4.21.0",
+    "mysql2": "^3.11.3"
   }
 }
