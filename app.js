@@ -2,14 +2,31 @@ import express from 'express';
 import { engine } from 'express-handlebars';
 
 const app = express();
+
+// Adicionando CSS
+app.use("/css", express.static("./css"))
+
+// Configurando express-handlebards
 app.engine('handlebars', engine());
 app.set('view engine', 'handlebars');
 app.set("views", "./views");
 
-app.use(express.static("public"));
+// Manipulação de dados via rotas
+app.use(express.json());
+app.use(express.urlencoded({extended:false}));
 
+app.use(express.static("public"));
 app.get("/", function(req, res){
-    res.render("index");
+    res.render("novaSenha");
+});
+
+// Rota de cadastro
+app.post("/cadastrar", function(req, res){
+    var user = req.body.usuario
+    var senha = req.body.senha
+    var nota = req.body.nota
+    console.log(user, senha, nota);
+    res.end();
 });
 
 app.listen(8080);
