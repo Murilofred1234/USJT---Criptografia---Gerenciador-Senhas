@@ -1,6 +1,17 @@
 import express from 'express';
 import { engine } from 'express-handlebars';
+import * as mysql from 'mysql2'
+import aesjs from 'aes-js';
 
+// Criando conexão sql
+const conn = mysql.createConnection({
+    host:"localhost",
+    user:"root",
+    password:"1234",
+    database:"projetocriptografia"
+});
+
+// Criando app com express
 const app = express();
 
 // Adicionando CSS
@@ -20,44 +31,37 @@ app.get("/", function(req, res){
     res.render("novaSenha");
 });
 
-// Rota de cadastro
+// Rota de cadastro de senha nova
 app.post("/cadastrar", function(req, res){
-    var user = req.body.usuario
+    // Buscando dados do formulário html
+    var usuario = req.body.usuario
     var senha = req.body.senha
     var nota = req.body.nota
-    console.log(user, senha, nota);
+
+    // Definindo chave de criptografia
+    var key = [];
+    for(let i = 0; i < 16; i++) {
+        key.push(Math.floor(Math.random() * 256))
+    }
+    
+    // Encriptando a senha
+    var senhaBytes = aesjs.utils.utf8.toBytes(senha);
+    var aesCtr = new aesjs.ModeOfOperation.ctr(key, new aesjs.Counter(5));
+    var encryptedBytes = aesCtr.encrypt(senhaBytes);
+    var encryptedPassword = aesjs.utils.hex.fromBytes(encryptedBytes);
+
+    // Conectando com servidor mySQL / Lançando possíveis erros
+    conn.connect(function(erro){
+        if(erro) throw erro;
+        console.log("Conexão efetuada com sucesso!")
+        
+        // Inserindo nova senha no banco / Lançando possíveis erros
+        var sql = "INSERT INTO senhas (usuario, senha, nota) VALUES ('"+usuario+"', '"+encryptedPassword+"', '"+nota+"')";
+        conn.query(sql, function(erro, result){
+            if(erro) throw erro;
+            console.log("Senha adicionada!")
+        });
+    });
     res.end();
 });
-
 app.listen(8080);
-
-
-
-
-
-
-
-
-
-
-// // Importando mysql2
-// const mysql = require("mysql2");
-// // Criando conexão sql
-// const conn = mysql.createConnection({
-//     host:"localhost",
-//     user:"root",
-//     password:"1234",
-//     database:"projetocriptografia"
-// });
-// // Conectando / Lançando possíveis erros
-// conn.connect(function(erro){
-//     if(erro) throw erro;
-//     console.log("Conexão efetuada com sucesso!")
-
-//     // Inserindo dados no banco / Lançando possíveis erros
-//     var sql = "INSERT INTO senhas (usuario, senha, nota) VALUES ('murilofcorso', '12345', 'Senha do e-mail')";
-//     conn.query(sql, function(erro, result){
-//         if(erro) throw erro;
-//         console.log("Funcionou!")
-//     });
-// });
