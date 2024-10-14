@@ -1,10 +1,12 @@
+// ----- IMPORTS -----
 import express from 'express';
 import { engine } from 'express-handlebars';
 import * as mysql from 'mysql2'
 import aesjs from 'aes-js';
-// import "./js/script.js";
 
 
+
+// ----- SQL -----
 // Criando conexão sql
 const conn = mysql.createConnection({
     host:"localhost",
@@ -12,13 +14,18 @@ const conn = mysql.createConnection({
     password:"1234",
     database:"projetocriptografia"
 });
-
  // Conectando com servidor mySQL / Lançando possíveis erros
  conn.connect(function(erro){
     if(erro) throw erro;
     console.log("Conexão efetuada com sucesso!")
 });
 
+
+
+// Definindo o usuário loggado
+var idUsuario = 1;
+
+// ----- CONFIGURAÇÕES -----
 // Criando app com express
 const app = express();
 // Adicionando CSS
@@ -32,9 +39,12 @@ app.use(express.json());
 app.use(express.urlencoded({extended:false}));
 app.use(express.static("public"));
 
+
+
+// ----- ROTAS -----
 // Rota principal
 app.get("/", function(req, res){ 
-    var sql = `SELECT * FROM senhas;`;
+    var sql = `SELECT * FROM senhas WHERE id_usuario = ${idUsuario};`;
 
     conn.query(sql, function(erro, result){
         if (erro) throw erro;
@@ -46,18 +56,21 @@ app.get("/", function(req, res){
     });
 });
 
+// Rota aba criação de senhas
 app.get('/novaSenha', function(req, res){
     // render your contact.handlebars
     res.render("novaSenha");
 });
 
-// Rota de cadastro de senha nova
+
+
+// ----- AÇÕES -----
+// Ação de cadastro de senha nova
 app.post("/cadastrarSenha", function(req, res){
     // Buscando dados do formulário html
     var usuario = req.body.usuario;
     var senha = req.body.senha;
     var nota = req.body.nota;
-    var idUsuario = 1;
 
     // Definindo chave de criptografia
     var key = [];
@@ -81,7 +94,7 @@ app.post("/cadastrarSenha", function(req, res){
     res.redirect('/novaSenha');
 });
 
-// Rota para excluir tudo
+// Ação para excluir tudo
 app.post("/excluir-tudo", function(req, res) {
     var sql = `DELETE FROM senhas;`;
 
@@ -92,5 +105,7 @@ app.post("/excluir-tudo", function(req, res) {
         res.redirect("/");
     });
 });
+
+
 
 app.listen(8080);
