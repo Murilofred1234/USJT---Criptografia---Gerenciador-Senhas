@@ -34,9 +34,10 @@ app.get("/", function(req, res){
 // Rota de cadastro de senha nova
 app.post("/cadastrar", function(req, res){
     // Buscando dados do formulário html
-    var usuario = req.body.usuario
-    var senha = req.body.senha
-    var nota = req.body.nota
+    var usuario = req.body.usuario;
+    var senha = req.body.senha;
+    var nota = req.body.nota;
+    var idUsuario = 1;
 
     // Definindo chave de criptografia
     var key = [];
@@ -56,7 +57,7 @@ app.post("/cadastrar", function(req, res){
         console.log("Conexão efetuada com sucesso!")
         
         // Inserindo nova senha no banco / Lançando possíveis erros
-        var sql = "INSERT INTO senhas (usuario, senha, nota) VALUES ('"+usuario+"', '"+encryptedPassword+"', '"+nota+"')";
+        var sql = `INSERT INTO senhas (usuario, id_usuario, senha, nota) VALUES ('${usuario}', '${idUsuario}', '${encryptedPassword}', '${nota}')`;
         conn.query(sql, function(erro, result){
             if(erro) throw erro;
             console.log("Senha adicionada!")
