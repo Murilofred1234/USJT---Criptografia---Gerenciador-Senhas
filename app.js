@@ -23,7 +23,7 @@ const conn = mysql.createConnection({
 
 
 // Definindo o usuário loggado
-var idUsuario = 1;
+var usuarioLogado = 0;
 
 // ----- CONFIGURAÇÕES -----
 // Criando app com express
@@ -43,8 +43,13 @@ app.use(express.static("public"));
 
 // ----- ROTAS -----
 // Rota principal
-app.get("/", function(req, res){ 
-    var sql = `SELECT * FROM senhas WHERE id_usuario = ${idUsuario};`;
+app.get('/', function(req, res){
+    res.render('login');
+});
+
+// Rota de exibição das senhas do usuário
+app.get("/index", function(req, res){ 
+    var sql = `SELECT * FROM senhas WHERE id_usuario = ${usuarioLogado};`;
 
     conn.query(sql, function(erro, result){
         if (erro) throw erro;
@@ -65,6 +70,28 @@ app.get('/novaSenha', function(req, res){
 
 
 // ----- AÇÕES -----
+app.post("/login", function(req, res){
+    // Buscando dados do formulário html
+    var usuario = req.body.usuario;
+    var senha = req.body.senha;
+
+    // Inserindo nova senha no banco / Lançando possíveis erros
+    var sql = `SELECT * FROM usuarios WHERE usuario = "${usuario}"`;
+    conn.query(sql, function(erro, result){
+        if(erro) throw erro;
+        if(result.length == 0) {
+            res.redirect('/');
+        } else {
+            if(result[0].senha == senha) {
+                usuarioLogado = result[0].id_usuario;
+                res.redirect('/index');
+            }
+        }
+
+    });
+});
+
+
 // Ação de cadastro de senha nova
 app.post("/cadastrarSenha", function(req, res){
     // Buscando dados do formulário html
@@ -85,7 +112,7 @@ app.post("/cadastrarSenha", function(req, res){
     var encryptedPassword = aesjs.utils.hex.fromBytes(encryptedBytes);
   
     // Inserindo nova senha no banco / Lançando possíveis erros
-    var sql = `INSERT INTO senhas (usuario, id_usuario, senha, nota) VALUES ('${usuario}', '${idUsuario}', '${encryptedPassword}', '${nota}');`;
+    var sql = `INSERT INTO senhas (usuario, id_usuario, senha, nota) VALUES ('${usuario}', '${usuarioLogado}', '${encryptedPassword}', '${nota}');`;
     conn.query(sql, function(erro, result){
         if(erro) throw erro;
         console.log("Senha adicionada!")
@@ -103,7 +130,7 @@ app.post("/excluir/:id", function(req, res) {
         if (erro) throw erro;
 
         // Redireciona de volta para a página principal após excluir a senha
-        res.redirect("/");
+        res.redirect("/index");
     });
 });
 
@@ -115,7 +142,7 @@ app.post("/excluir-tudo", function(req, res) {
         if (erro) throw erro;
 
         // Redireciona para a página inicial após excluir tudo
-        res.redirect("/");
+        res.redirect("/index");
     });
 });
 
