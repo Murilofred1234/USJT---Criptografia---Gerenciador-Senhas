@@ -9,6 +9,10 @@
             <p>ID: {{this.usuario}}</p>
             <p>Senha: {{this.senha}}</p>
             <p>Senha: {{this.nota}}</p>
+
+            <form action="/excluir/{{this.id_senha}}" method="POST">
+                <button class="botaoExcluir" type="submit">Excluir</button>
+            </form>
         </div>
     {{/each}}
 </div>

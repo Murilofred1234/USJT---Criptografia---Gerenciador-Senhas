@@ -94,6 +94,19 @@ app.post("/cadastrarSenha", function(req, res){
     res.redirect('/novaSenha');
 });
 
+// Ação para excluir uma senha específica
+app.post("/excluir/:id", function(req, res) {
+    var id = req.params.id;  // Pega o ID da senha
+
+    var sql = `DELETE FROM senhas WHERE id_senha = ${id}`;  // SQL com parâmetro
+    conn.query(sql, function(erro, result) {
+        if (erro) throw erro;
+
+        // Redireciona de volta para a página principal após excluir a senha
+        res.redirect("/");
+    });
+});
+
 // Ação para excluir tudo
 app.post("/excluir-tudo", function(req, res) {
     var sql = `DELETE FROM senhas;`;
