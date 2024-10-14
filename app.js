@@ -2,6 +2,8 @@ import express from 'express';
 import { engine } from 'express-handlebars';
 import * as mysql from 'mysql2'
 import aesjs from 'aes-js';
+// import "./js/script.js";
+
 
 // Criando conexão sql
 const conn = mysql.createConnection({
@@ -31,8 +33,17 @@ app.use(express.urlencoded({extended:false}));
 app.use(express.static("public"));
 
 // Rota principal
-app.get("/", function(req, res){
-    res.render("index");
+app.get("/", function(req, res){ 
+    var sql = `SELECT * FROM senhas;`;
+
+    conn.query(sql, function(erro, result){
+        if (erro) throw erro;
+
+        // Renderiza a página 'index' passando os resultados da consulta
+        res.render("index", {
+            senhas: result // passa o resultado da query para o template
+        });
+    });
 });
 
 app.get('/novaSenha', function(req, res){
@@ -61,7 +72,7 @@ app.post("/cadastrarSenha", function(req, res){
     var encryptedPassword = aesjs.utils.hex.fromBytes(encryptedBytes);
   
     // Inserindo nova senha no banco / Lançando possíveis erros
-    var sql = `INSERT INTO senhas (usuario, id_usuario, senha, nota) VALUES ('${usuario}', '${idUsuario}', '${encryptedPassword}', '${nota}')`;
+    var sql = `INSERT INTO senhas (usuario, id_usuario, senha, nota) VALUES ('${usuario}', '${idUsuario}', '${encryptedPassword}', '${nota}');`;
     conn.query(sql, function(erro, result){
         if(erro) throw erro;
         console.log("Senha adicionada!")
@@ -69,4 +80,17 @@ app.post("/cadastrarSenha", function(req, res){
     
     res.redirect('/novaSenha');
 });
+
+// Rota para excluir tudo
+app.post("/excluir-tudo", function(req, res) {
+    var sql = `DELETE FROM senhas;`;
+
+    conn.query(sql, function(erro, result) {
+        if (erro) throw erro;
+
+        // Redireciona para a página inicial após excluir tudo
+        res.redirect("/");
+    });
+});
+
 app.listen(8080);
