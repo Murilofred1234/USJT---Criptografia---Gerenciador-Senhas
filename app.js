@@ -80,17 +80,27 @@ app.post("/login", function(req, res){
     conn.query(sql, function(erro, result){
         if(erro) throw erro;
         if(result.length == 0) {
+            console.log("Usuário não encontrado");
             res.redirect('/');
         } else {
             if(result[0].senha == senha) {
                 usuarioLogado = result[0].id_usuario;
+                console.log(`Usuário ${result[0].usuario} logou`)
                 res.redirect('/index');
+            }
+            else {
+                console.log("Usuário ou senha incorretos");
+                res.redirect('/');
             }
         }
 
     });
 });
 
+app.post('/logout', function(req, res) {
+    res.redirect('/');
+    usuarioLogado = 0;
+});
 
 // Ação de cadastro de senha nova
 app.post("/cadastrarSenha", function(req, res){
