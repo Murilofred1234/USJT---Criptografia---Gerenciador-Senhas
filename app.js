@@ -17,7 +17,7 @@ const conn = mysql.createConnection({
  // Conectando com servidor mySQL / Lançando possíveis erros
  conn.connect(function(erro){
     if(erro) throw erro;
-    console.log("Conexão efetuada com sucesso!")
+    console.log("Conexão efetuada com sucesso!");
 });
 
 
@@ -29,7 +29,7 @@ var usuarioLogado = 0;
 // Criando app com express
 const app = express();
 // Adicionando CSS
-app.use("/css", express.static("./css"))
+app.use("/css", express.static("./css"));
 // Configurando express-handlebards
 app.engine('handlebars', engine());
 app.set('view engine', 'handlebars');
@@ -67,6 +67,11 @@ app.get('/novaSenha', function(req, res){
     res.render("novaSenha");
 });
 
+// Rota de cadastro de usuário
+app.get('/cadastro', function(req, res){
+    res.render('cadastro');
+});
+
 
 
 // ----- AÇÕES -----
@@ -85,7 +90,7 @@ app.post("/login", function(req, res){
         } else {
             if(result[0].senha == senha) {
                 usuarioLogado = result[0].id_usuario;
-                console.log(`Usuário ${result[0].usuario} logou`)
+                console.log(`Usuário ${result[0].usuario} logou`);
                 res.redirect('/index');
             }
             else {
@@ -97,10 +102,23 @@ app.post("/login", function(req, res){
     });
 });
 
+// Ação de logout
 app.post('/logout', function(req, res) {
     res.redirect('/');
     usuarioLogado = 0;
 });
+
+// Ação de cadastro de usuário
+app.post("/cadastrar", function(req, res) {
+    var usuario = req.body.usuario;
+    var senha = req.body.senha;
+
+    var sql = `INSERT INTO usuarios (usuario, senha) VALUES("${usuario}", "${senha}")`;
+    conn.query(sql, function(erro, result){
+        if(erro) throw erro;
+        console.log("Usuário adicionado!")
+    });
+})
 
 // Ação de cadastro de senha nova
 app.post("/cadastrarSenha", function(req, res){
@@ -112,7 +130,7 @@ app.post("/cadastrarSenha", function(req, res){
     // Definindo chave de criptografia
     var key = [];
     for(let i = 0; i < 16; i++) {
-        key.push(Math.floor(Math.random() * 256))
+        key.push(Math.floor(Math.random() * 256));
     }
     
     // Encriptando a senha
