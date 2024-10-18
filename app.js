@@ -24,6 +24,7 @@ const conn = mysql.createConnection({
 
 // Definindo o usuário loggado
 var usuarioLogado = 0;
+var chaveUsuarioLogado;
 
 // ----- CONFIGURAÇÕES -----
 // Criando app com express
@@ -90,6 +91,7 @@ app.post("/login", function(req, res){
         } else {
             if(result[0].senha == senha) {
                 usuarioLogado = result[0].id_usuario;
+                chaveUsuarioLogado = result[0].chave;
                 console.log(`Usuário ${result[0].usuario} logou`);
                 res.redirect('/index');
             }
@@ -113,10 +115,16 @@ app.post("/cadastrar", function(req, res) {
     var usuario = req.body.usuario;
     var senha = req.body.senha;
 
-    var sql = `INSERT INTO usuarios (usuario, senha) VALUES("${usuario}", "${senha}")`;
+    var chave = [];
+    for(let i = 0; i < 16; i++) {
+        chave.push(Math.floor(Math.random() * 256));
+    }
+
+    var sql = `INSERT INTO usuarios (usuario, senha, chave) VALUES("${usuario}", "${senha}", "${chave}")`;
     conn.query(sql, function(erro, result){
         if(erro) throw erro;
         console.log("Usuário adicionado!")
+        res.redirect('/');
     });
 })
 
@@ -126,16 +134,10 @@ app.post("/cadastrarSenha", function(req, res){
     var usuario = req.body.usuario;
     var senha = req.body.senha;
     var nota = req.body.nota;
-
-    // Definindo chave de criptografia
-    var key = [];
-    for(let i = 0; i < 16; i++) {
-        key.push(Math.floor(Math.random() * 256));
-    }
     
     // Encriptando a senha
     var senhaBytes = aesjs.utils.utf8.toBytes(senha);
-    var aesCtr = new aesjs.ModeOfOperation.ctr(key, new aesjs.Counter(5));
+    var aesCtr = new aesjs.ModeOfOperation.ctr(chaveUsuarioLogado.split(',').map(Number), new aesjs.Counter(5));
     var encryptedBytes = aesCtr.encrypt(senhaBytes);
     var encryptedPassword = aesjs.utils.hex.fromBytes(encryptedBytes);
   
