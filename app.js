@@ -55,6 +55,15 @@ app.get("/index", function(req, res){
     conn.query(sql, function(erro, result){
         if (erro) throw erro;
 
+        for(let i = 0; i < result.length; i++) {
+            var encryptedBytes = aesjs.utils.hex.toBytes(result[i].senha);
+            var aesCtr = new aesjs.ModeOfOperation.ctr(chaveUsuarioLogado, new aesjs.Counter(5));
+            var decryptedBytes = aesCtr.decrypt(encryptedBytes);
+            var decryptedText = aesjs.utils.utf8.fromBytes(decryptedBytes);
+            
+            result[i].senha = decryptedText;
+        }
+
         // Renderiza a página 'index' passando os resultados da consulta
         res.render("index", {
             senhas: result // passa o resultado da query para o template
@@ -91,7 +100,7 @@ app.post("/login", function(req, res){
         } else {
             if(result[0].senha == senha) {
                 usuarioLogado = result[0].id_usuario;
-                chaveUsuarioLogado = result[0].chave;
+                chaveUsuarioLogado = result[0].chave.split(',').map(Number);
                 console.log(`Usuário ${result[0].usuario} logou`);
                 res.redirect('/index');
             }
@@ -137,7 +146,7 @@ app.post("/cadastrarSenha", function(req, res){
     
     // Encriptando a senha
     var senhaBytes = aesjs.utils.utf8.toBytes(senha);
-    var aesCtr = new aesjs.ModeOfOperation.ctr(chaveUsuarioLogado.split(',').map(Number), new aesjs.Counter(5));
+    var aesCtr = new aesjs.ModeOfOperation.ctr(chaveUsuarioLogado, new aesjs.Counter(5));
     var encryptedBytes = aesCtr.encrypt(senhaBytes);
     var encryptedPassword = aesjs.utils.hex.fromBytes(encryptedBytes);
   
