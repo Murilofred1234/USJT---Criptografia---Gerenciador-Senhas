@@ -5,6 +5,25 @@ import * as mysql from 'mysql2'
 import aesjs from 'aes-js';
 
 
+function encrypt(text, key) {
+    var textBytes = aesjs.utils.utf8.toBytes(text);
+    var aesCtr = new aesjs.ModeOfOperation.ctr(key, new aesjs.Counter(5));
+    var encryptedBytes = aesCtr.encrypt(textBytes);
+    var encryptedHex = aesjs.utils.hex.fromBytes(encryptedBytes);
+    
+    return encryptedHex;
+}
+
+function decrypt(hex, key) {
+    var encryptedBytes = aesjs.utils.hex.toBytes(hex);
+    var aesCtr = new aesjs.ModeOfOperation.ctr(key, new aesjs.Counter(5));
+    var decryptedBytes = aesCtr.decrypt(encryptedBytes);
+    var decryptedText = aesjs.utils.utf8.fromBytes(decryptedBytes);
+
+    return decryptedText;
+}
+
+
 
 // ----- SQL -----
 // Criando conexão sql
@@ -55,13 +74,8 @@ app.get("/index", function(req, res){
     conn.query(sql, function(erro, result){
         if (erro) throw erro;
 
-        for(let i = 0; i < result.length; i++) {
-            var encryptedBytes = aesjs.utils.hex.toBytes(result[i].senha);
-            var aesCtr = new aesjs.ModeOfOperation.ctr(chaveUsuarioLogado, new aesjs.Counter(5));
-            var decryptedBytes = aesCtr.decrypt(encryptedBytes);
-            var decryptedText = aesjs.utils.utf8.fromBytes(decryptedBytes);
-            
-            result[i].senha = decryptedText;
+        for(let i = 0; i < result.length; i++) {        
+            result[i].senha = decrypt(result[i].senha, chaveUsuarioLogado);
         }
 
         // Renderiza a página 'index' passando os resultados da consulta
@@ -144,11 +158,7 @@ app.post("/cadastrarSenha", function(req, res){
     var senha = req.body.senha;
     var nota = req.body.nota;
     
-    // Encriptando a senha
-    var senhaBytes = aesjs.utils.utf8.toBytes(senha);
-    var aesCtr = new aesjs.ModeOfOperation.ctr(chaveUsuarioLogado, new aesjs.Counter(5));
-    var encryptedBytes = aesCtr.encrypt(senhaBytes);
-    var encryptedPassword = aesjs.utils.hex.fromBytes(encryptedBytes);
+    var encryptedPassword = encrypt(senha, chaveUsuarioLogado);
   
     // Inserindo nova senha no banco / Lançando possíveis erros
     var sql = `INSERT INTO senhas (usuario, id_usuario, senha, nota) VALUES ('${usuario}', '${usuarioLogado}', '${encryptedPassword}', '${nota}');`;
