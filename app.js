@@ -41,11 +41,14 @@ const conn = mysql.createConnection({
 
 
 
+// ----- CONFIGURAÇÕES -----
 // Definindo o usuário loggado
 var usuarioLogado = 0;
 var chaveUsuarioLogado;
 
-// ----- CONFIGURAÇÕES -----
+// 
+var chaveApp = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]
+
 // Criando app com express
 const app = express();
 // Adicionando CSS
@@ -104,7 +107,6 @@ app.post("/login", function(req, res){
     var usuario = req.body.usuario;
     var senha = req.body.senha;
 
-    // Inserindo nova senha no banco / Lançando possíveis erros
     var sql = `SELECT * FROM usuarios WHERE usuario = "${usuario}"`;
     conn.query(sql, function(erro, result){
         if(erro) throw erro;
@@ -112,7 +114,7 @@ app.post("/login", function(req, res){
             console.log("Usuário não encontrado");
             res.redirect('/');
         } else {
-            if(result[0].senha == senha) {
+            if(decrypt(result[0].senha, chaveApp) == senha) {
                 usuarioLogado = result[0].id_usuario;
                 chaveUsuarioLogado = result[0].chave.split(',').map(Number);
                 console.log(`Usuário ${result[0].usuario} logou`);
@@ -143,7 +145,7 @@ app.post("/cadastrar", function(req, res) {
         chave.push(Math.floor(Math.random() * 256));
     }
 
-    var sql = `INSERT INTO usuarios (usuario, senha, chave) VALUES("${usuario}", "${senha}", "${chave}")`;
+    var sql = `INSERT INTO usuarios (usuario, senha, chave) VALUES("${usuario}", "${encrypt(senha, chaveApp)}", "${chave}")`;
     conn.query(sql, function(erro, result){
         if(erro) throw erro;
         console.log("Usuário adicionado!")
