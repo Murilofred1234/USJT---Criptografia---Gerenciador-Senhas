@@ -1,18 +1,14 @@
-<form action="/login" method="post">
-    <div class="container__bloco">
+<div class="container__bloco">
+    <form action="/login" class="container__bloco" method="post">
         <label for="user">Usuário: </label>
         <input type="text" name="usuario" id="user" placeholder="Digite o usuário" required>
 
         <label for="user">Senha: </label>
-        <input type="text" name="senha" id="senha" placeholder="Digite a senha" required>
+        <input type="password" name="senha" id="senha" placeholder="Digite a senha" required>
 
         <div>
             <input type="submit" value="Login">
         </div>
-    </div>
-</form>
-
-
-<div class="container__bloco">
-    <a href="/cadastro" id="button">Cadastrar</a>
+    </form>
+    <a href="/cadastro"><button>Cadastrar</button></a>
 </div>
