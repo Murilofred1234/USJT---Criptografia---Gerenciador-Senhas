@@ -1,23 +1,26 @@
-<div class="container__titulo">
-    <h1 class="titulo-pagina nova-senha">NOVA SENHA</h1>
-</div>
-<div class="bloco-form">  
+<div class="container__bloco">
+    <div class="container__titulo">
+        <h1 class="titulo-pagina nova-senha">NOVA SENHA</h1>
+    </div>
+
+    <div class="bloco-form">  
     
-    <h2>Preencha os campos</h2>
-    <form action="/cadastrarSenha" method="post" id="name-form">
-        <label for="user">Usuário: </label>
-        <input type="text" name="usuario" id="user" placeholder="Digite o usuário" required>
+        <h2>Preencha os campos</h2>
+        <form action="/cadastrarSenha" method="post" id="name-form">
+            <label for="user">Usuário: </label>
+            <input type="text" name="usuario" id="user" placeholder="Digite o usuário" required>
 
-        <label for="user">Senha: </label>
-        <input type="text" name="senha" id="senha" placeholder="Digite a senha" required> 
+            <label for="user">Senha: </label>
+            <input type="text" name="senha" id="senha" placeholder="Digite a senha" required> 
 
-        <label for="user">Nota: </label>
-        <input type="text" name="nota" id="nota" placeholder="Anotação"> 
+            <label for="user">Nota: </label>
+            <input type="text" name="nota" id="nota" placeholder="Anotação"> 
 
-        <div>
-            <input type="submit" value="Enviar" class="btn"> 
-            <input type="button" value="Voltar" onclick="window.location.href='/index'">  
-        </div>
-    </form>
+            <div>
+                <input type="submit" value="Enviar" class="btn"> 
+                <input type="button" value="Voltar" onclick="window.location.href='/index'">  
+            </div>
+        </form>
+    </div>
 </div>
 
