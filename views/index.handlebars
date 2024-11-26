@@ -3,7 +3,7 @@
     <a href="/novaSenha" id="button">Adicionar Nova Senha</a>
 </div>
 
-<div class="container__bloco">
+<div class="container-bloco">
     {{#each senhas}}
         <div class="bloco">
             <p>Usuário: {{this.usuario}}</p>
@@ -11,7 +11,7 @@
             <p>Nota: {{this.nota}}</p>
 
             <form action="/excluir/{{this.id_senha}}" method="POST">
-                <button class="botaoExcluir" type="submit">Excluir</button>
+                <button class="botao-excluir" type="submit">Excluir</button>
             </form>
         </div>
     {{/each}}
@@ -19,14 +19,14 @@
 
 {{#if senhas.length}}
     <form action="/excluir-tudo" method="POST" >
-        <div class="container__bloco">
-            <button class="excluirTudo" type="submit">Excluir Todas as Senhas</button>
+        <div class="container-bloco">
+            <button class="botao-excluir-tudo" type="submit">Excluir Todas as Senhas</button>
         </div>
     </form>
 {{/if}}
 
 <form action="/logout" method="POST">
-    <div class="container__bloco">
+    <div class="container-bloco">
         <button>Logout</button>
     </div>
 </form>
